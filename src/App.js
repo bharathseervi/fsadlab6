@@ -1,25 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+import {
+    Display_Inventory,
+    AddInventory
+} from './to_inventory';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    const [inventory, setInventory] = useState([]);
+
+    // Fetch inventory from backend
+    const getInventory = async () => {
+
+        try {
+
+            const response = await axios.get(
+                "http://localhost:8000"
+            );
+
+            setInventory(response.data);
+
+        }
+        catch (error) {
+
+            console.log("Error fetching inventory", error);
+
+        }
+    };
+
+    // Execute when component loads
+    useEffect(() => {
+
+        getInventory();
+
+    }, []);
+
+    return (
+
+        <div>
+
+            <Display_Inventory inventory={inventory} />
+
+            <AddInventory refreshInventory={getInventory} />
+
+        </div>
+
+    );
 }
 
 export default App;
